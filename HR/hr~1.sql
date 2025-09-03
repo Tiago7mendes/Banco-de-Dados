@@ -150,7 +150,37 @@ GROUP BY e.department_id, min_salaries.min_salary;
 -- 13. Encontre os sobrenomes de todos os funcionários cujos salários são iguais ao salário mínimo de qualquer
 --departamento.
 
+SELECT last_name, salary
+FROM employees
+WHERE salary IN (
+    SELECT MIN(salary)
+    FROM employees
+    GROUP BY department_id
+);
+
 -- 14. Quais funcionários têm salários inferiores aos dos programadores do departamento de TI?
+
+SELECT last_name, salary -- esse eu nao consegui testar pois, o oracle online estava em manutencao (03/09)
+FROM employees
+WHERE salary < ANY (
+    SELECT salary
+    FROM employees
+    WHERE job_id LIKE '%PROG%'
+);
 
 -- 15. Liste last_name, first_name, department_id e manager_id de todos os funcionários que têm o mesmo
 --department_id e manager_id que o funcionário 141. Exclua o funcionário 141 do conjunto de resultados.
+
+SELECT last_name, first_name, department_id, manager_id
+FROM employees
+WHERE department_id = (
+    SELECT department_id
+    FROM employees
+    WHERE employee_id = 141
+)
+AND manager_id = (
+    SELECT manager_id
+    FROM employees
+    WHERE employee_id = 141
+)
+AND employee_id <> 141;
