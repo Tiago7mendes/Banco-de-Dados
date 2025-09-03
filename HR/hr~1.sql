@@ -82,7 +82,7 @@ AND salary > (
 
 -- 8. Consultar id de países que possuem departamentos da empresa (usar EXISTS).
 
-SELECT DISTINCT country_id
+SELECT country_id
 FROM countries c
 WHERE EXISTS (
     SELECT 1
@@ -129,3 +129,28 @@ AND hire_date > (
     FROM employees
     WHERE last_name = 'Davies'
 );
+
+-- 12. Retorne o ID de departamento e o salário mínimo de todos os funcionários, agrupados por ID de departamento,
+--que têm um salário mínimo superior aos daqueles cujo ID de departamento é diferente de 50.
+
+SELECT e.department_id, min_salaries.min_salary
+FROM (
+    SELECT department_id, MIN(salary) AS min_salary
+    FROM employees
+    GROUP BY department_id
+) min_salaries
+JOIN employees e ON e.department_id = min_salaries.department_id
+WHERE min_salaries.min_salary > (
+    SELECT MIN(salary)
+    FROM employees
+    WHERE department_id <> 50
+)
+GROUP BY e.department_id, min_salaries.min_salary;
+
+-- 13. Encontre os sobrenomes de todos os funcionários cujos salários são iguais ao salário mínimo de qualquer
+--departamento.
+
+-- 14. Quais funcionários têm salários inferiores aos dos programadores do departamento de TI?
+
+-- 15. Liste last_name, first_name, department_id e manager_id de todos os funcionários que têm o mesmo
+--department_id e manager_id que o funcionário 141. Exclua o funcionário 141 do conjunto de resultados.
