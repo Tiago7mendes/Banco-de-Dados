@@ -20,3 +20,17 @@ ALTER USER usuario2 QUOTA 5M ON USERS;
 --criar sessões e tabelas
 
 grant create session, create table to usuario1;
+
+-- Criar um role chamado admin1 que contenha
+--privilégios para criar sessões, tabelas, views,
+--sequences e procedures
+
+--Atribuir o role admin1 para o usuário usuario2
+--Faça o teste de conexão
+--Crie a tabela Emp (emp_id, nome, salario)
+
+create role admin1;
+
+grant create table, create view,create sequence, create procedure ,create session to admin1;
+
+GRANT admin1 TO usuario2;
