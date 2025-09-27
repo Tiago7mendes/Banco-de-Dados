@@ -1,0 +1,22 @@
+1. Para cada usuário, há quantas transações? Quais os comandos de início e fim de cada transação?
+
+USER1 → 1 transação (inicia no comando executado e termina no COMMIT).
+
+USER2 → 1 transação (inicia no comando executado e termina no ROLLBACK).
+
+2. Alguma transação fica bloqueada (em espera) em algum momento? Por quê?
+
+Sim, quando USER2 tenta executar um UPDATE, porque a transação que a alterou ainda não fez COMMIT ou ROLLBACK.
+
+3. Qual o valor final do phone_number do employee com id = 118 após a conclusão de todas as transações? Justifique.
+
+O valor final será o que USER1 definiu no UPDATE.
+As mudanças foram confirmadas com o COMMIT do USER1, já as alterações do USER2 não foram salvas, por causa do ROLLBACK. (ACHO)
+
+4. Suponha que o UPDATE em USER2 fosse realizado para o empregado com id = 119. Alguma transação ficaria bloqueada? Por quê?
+
+Não, porque USER1 atualizou o employee 118 e USER2 estaria atualizando o 119.
+
+5. Suponha que a transação em USER2 finalizasse com COMMIT em vez de ROLLBACK. Qual seria o valor final do phone_number do employee com id = 118?
+
+Ainda seria o valor definido por USER1. Alterou a linha, mas ficou bloqueado até USER1 dar COMMIT. Só o valor de USER1 foi gravado no banco.
