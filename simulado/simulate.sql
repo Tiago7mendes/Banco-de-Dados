@@ -267,23 +267,59 @@ WHERE preco > (
 -- Revogue o privilégio de seleção.
 
 -- Explique a diferença entre GRANT e REVOKE.
+-- GRANT dá permissão e REVOKE tira permissão
 
 -- O que são privilégios de sistema e privilégios de objeto?
+-- Privilégios de objeto permitem acessar e manipular objetos (tabelas, views, etc -> select, insert, update, delete).
+-- Privilégios de sistema executam ações mais gerais do banco (create table, create user, alter session...)
 
 -- Qual a diferença entre papel (ROLE) e usuário (USER)?
+-- Role é o conjunto de privilégios (gerente), já o user é a conta individual, quem acessa o banco.
 
 -- 🔹 8. Visões (VIEWS)
 
 -- Crie uma view chamada VW_CLIENTES_ATIVOS que exibe apenas clientes com status = 'Ativo'.
 
+ALTER TABLE clientes ADD status VARCHAR2(10); -- para adicionar status
+UPDATE clientes SET status = 'Ativo' WHERE id = 1;
+UPDATE clientes SET status = 'Inativo' WHERE id = 2;
+COMMIT;
+
+CREATE VIEW vw_clientes_ativos AS
+SELECT id, nome, cidade_id
+FROM clientes
+WHERE status = 'Ativo';
+
 -- Faça um SELECT na view.
+
+SELECT * FROM vw_clientes_ativos;
 
 -- Tente fazer um UPDATE na view e explique o resultado.
 
+UPDATE vw_clientes_ativos
+SET nome = 'Cliente Atualizado'
+WHERE id = 1;
+
 -- Crie uma view com junção entre CLIENTES e PEDIDOS.
+
+CREATE VIEW vw_clientes_pedidos AS
+SELECT c.id AS cliente_id,
+       c.nome AS cliente_nome,
+       p.id AS pedido_id,
+       p.data_pedido,
+       p.valor_total
+FROM clientes c
+JOIN pedidos p ON c.id = p.cliente_id;
 
 -- Crie uma view com alias de colunas.
 
+CREATE VIEW vw_clientes_alias (codigo, nome_cliente, cidade)
+AS
+SELECT id, nome, cidade_id
+FROM clientes;
+
 -- Explique a diferença entre view simples e view complexa.
+-- simples é sem join e group by, e com isso da para fazer update, a complexa é ao contrário e não consegue fazer update.
 
 -- Explique o que acontece se a tabela base de uma view for removida.
+-- fica inválida
