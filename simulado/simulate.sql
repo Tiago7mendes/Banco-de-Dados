@@ -191,21 +191,72 @@ FROM produtos;
 
 -- Crie uma sequência chamada SEQ_CLIENTE começando em 1 e incrementando de 1.
 
+CREATE SEQUENCE seq_cliente
+START WITH 1
+INCREMENT BY 1
+NOCACHE
+NOCYCLE;
+
 -- Use a sequência para inserir novos registros em uma tabela CLIENTE.
+
+INSERT INTO clientes (id, nome, cidade_id)
+VALUES (seq_cliente.NEXTVAL, 'Tiago Setti', 1);
+
+INSERT INTO clientes (id, nome, cidade_id)
+VALUES (seq_cliente.NEXTVAL, 'Victor Rodrigues', 2);
 
 -- Exiba o valor atual e o próximo da sequência (CURRVAL, NEXTVAL).
 
+SELECT seq_cliente.CURRVAL AS valor_atual FROM dual;
+SELECT seq_cliente.NEXTVAL AS proximo_valor FROM dual;
+
 -- Explique o que acontece se uma sequência for usada em transações com ROLLBACK.
+-- Ela não volta atrás, o cliente não vai ser salvo e o número da sequencia foi consumido
+-- O valor da sequência continua avançado, mesmo se a transação for desfeita.
 
 -- 🔹 6. Subconsultas
 
 -- Liste todos os produtos cujo preço é maior que a média dos preços.
 
+SELECT nome, preco
+FROM produtos
+WHERE preco > (SELECT AVG(preco) FROM produtos);
+
 -- Liste clientes que não fizeram pedidos (NOT IN).
+
+SELECT nome
+FROM clientes
+WHERE id NOT IN (
+    SELECT cliente_id
+    FROM pedidos
+);
 
 -- Liste os produtos que aparecem em pelo menos um pedido (EXISTS).
 
+SELECT nome
+FROM produtos p
+WHERE EXISTS (
+    SELECT 1
+    FROM pedidos_itens i
+    WHERE i.produto_id = p.id
+);
+
 -- Compare o resultado de uma subconsulta correlacionada e não correlacionada.
+-- Não Correlacionada
+SELECT * 
+FROM produtos 
+WHERE preco > (SELECT AVG(preco) FROM produtos);
+-- A subconsulta roda uma única vez, independente da linha da consulta principal.
+
+-- Correlacionada
+SELECT nome 
+FROM produtos p 
+WHERE preco > (
+    SELECT AVG(preco) 
+    FROM produtos 
+    WHERE categoria_id = p.categoria_id
+);
+-- A subconsulta roda para cada linha, usando valores da consulta principal (p.categoria_id).
 
 -- 🔹 7. Usuários e Privilégios
 
