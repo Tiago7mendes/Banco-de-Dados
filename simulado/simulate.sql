@@ -100,18 +100,33 @@ INNER JOIN clientes cl ON cl.cidade_id = cd.id;
 
 -- Crie uma tabela CONTA(id, titular, saldo).
 
+CREATE TABLE conta (
+    id NUMBER PRIMARY KEY,
+    titular VARCHAR2(50),
+    saldo NUMBER(10,2)
+);
+
 -- Insira 2 contas com saldos diferentes.
 
--- Inicie uma transação (BEGIN TRANSACTION).
+INSERT INTO conta VALUES (1, 'Tiago', 1000);
+INSERT INTO conta VALUES (2, 'Victor', 500);
 
 -- Transfira R$100 da conta 1 para a conta 2 usando UPDATE.
 
+UPDATE conta SET saldo = saldo - 100 WHERE id = 1;
+UPDATE conta SET saldo = saldo + 100 WHERE id = 2;
+
 -- Use ROLLBACK e verifique se as alterações foram desfeitas.
+ROLLBACK; -- os saldos voltam a ser 1000 e 500
+
 -- Repita a operação e finalize com COMMIT.
+UPDATE conta SET saldo = saldo - 100 WHERE id = 1;
+UPDATE conta SET saldo = saldo + 100 WHERE id = 2;
+COMMIT;
 
 -- Explique a diferença entre COMMIT e ROLLBACK.
--- Rollback esta inserido para cancelar mudancas feitas e cancelando o passo de alteracao para o resultado final.
--- Commit e um comando para salvar as mudancas feitas em uma banco.
+-- Rollback : Cancela as mudanças não confirmadas; retorna ao estado anterior.
+-- Commit : Confirma as mudanças feitas; torna-as permanentes no banco.
 
 -- O que é o conceito de ACID e por que é importante?
 -- Atomicidade, Consistência, Isolamento e Durabilidade.
@@ -121,19 +136,56 @@ INNER JOIN clientes cl ON cl.cidade_id = cd.id;
 
 -- Faça um SELECT com alias de colunas e de tabela.
 
+SELECT c.id AS codigo, c.titular AS nome, c.saldo AS saldo_atual
+FROM conta c;
+
 -- Liste os 3 primeiros registros usando FETCH FIRST.
+
+SELECT * FROM conta
+FETCH FIRST 3 ROWS ONLY;
 
 -- Ordene por nome em ordem decrescente.
 
+SELECT * FROM conta
+ORDER BY titular DESC;
+
 -- Selecione apenas produtos com preço maior que 100.
+
+SELECT * FROM produtos
+WHERE preco > 100;
 
 -- Utilize DISTINCT para eliminar valores repetidos.
 
+SELECT DISTINCT categoria
+FROM produtos;
+
 -- Use BETWEEN, IN, LIKE e IS NULL em consultas separadas.
+
+-- BETWEEN
+SELECT * FROM produtos WHERE preco BETWEEN 100 AND 500;
+
+-- IN
+SELECT * FROM produtos WHERE categoria IN ('Eletrônicos', 'Roupas');
+
+-- LIKE
+SELECT * FROM produtos WHERE nome LIKE 'S%';  -- começa com S
+
+-- IS NULL
+SELECT * FROM produtos WHERE desconto IS NULL;
 
 -- Faça um SELECT aninhado (subconsulta no WHERE).
 
+SELECT nome, preco
+FROM produtos
+WHERE preco > (SELECT AVG(preco) FROM produtos);
+
 -- Utilize uma função de agregação (COUNT, AVG, MAX, SUM).
+
+SELECT COUNT(*) AS total_produtos,
+       AVG(preco) AS media_preco,
+       MAX(preco) AS maior_preco,
+       SUM(preco) AS soma_precos
+FROM produtos;
 
 -- 🔹 5. Sequências (SEQUENCE)
 
